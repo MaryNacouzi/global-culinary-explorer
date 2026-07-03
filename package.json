@@ -1,0 +1,18 @@
+{
+  "name": "global-culinary-explorer",
+  "version": "1.0.0",
+  "description": "The Global Culinary Explorer & Smart Grocery Assistant - Full Stack Final Project 2026",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.12.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "node-fetch": "^2.7.0"
+  }
+}

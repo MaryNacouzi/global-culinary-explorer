@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Global Culinary Explorer | Home</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/paragraph.css">
+</head>
+<body>
+
+<header>
+  <nav class="custom-sticky-nav sticky-top">
+    <a href="index.html" class="brand">🌍 Global Culinary Explorer</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="recipe-lab.html">Recipe Lab</a></li>
+      <li><a href="grocery-assistant.html">Grocery Assistant</a></li>
+      <li><a href="beirut-bites.html">Beirut Bites</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <section>
+    <h1 class="section-title">Discover Recipes From Around the World</h1>
+    <p>Search thousands of real recipes powered by the Spoonacular API.</p>
+
+    <form id="search-form" class="search-bar" role="search">
+      <input
+        type="text"
+        id="search-input"
+        class="form-control-custom"
+        placeholder="Search for a dish, e.g. 'kibbeh', 'lasagna', 'tacos'..."
+        aria-label="Search recipes"
+        required
+      />
+      <button type="submit" class="btn-mustard">Search</button>
+    </form>
+
+    <div id="status-region" aria-live="polite"></div>
+    <div id="results-grid" class="dish-grid"></div>
+  </section>
+</main>
+
+<footer>
+  <p>&copy; 2026 Global Culinary Explorer & Smart Grocery Assistant — Lebanese University, Faculty of Engineering</p>
+</footer>
+
+<script src="js/spoonacularSearch.js"></script>
+</body>
+</html>
