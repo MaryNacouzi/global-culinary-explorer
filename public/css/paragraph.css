@@ -9,7 +9,7 @@
   --color-bg: #FBF9F5;
   --color-text: #4F622E;
   --color-sage: #C3D09A;
-  --color-mustard: #EABA4A;
+  --color-mustard: #ffc31f;
   --color-cream: #FEEABC;
   --radius-md: 14px;
   --shadow-soft: 0 4px 14px rgba(79, 98, 46, 0.12);
@@ -116,7 +116,7 @@ main {
 }
 
 .btn-mustard:hover {
-  background-color: #d9a63c;
+  background-color: #ffc31f;
   transform: translateY(-1px);
 }
 
