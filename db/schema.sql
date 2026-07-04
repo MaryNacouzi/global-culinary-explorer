@@ -17,9 +17,11 @@ CREATE TABLE IF NOT EXISTS grocery_list (
     item_name VARCHAR(120) NOT NULL,
     quantity VARCHAR(40) DEFAULT '1',
     is_checked BOOLEAN NOT NULL DEFAULT FALSE,
+    session_id VARCHAR(64) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- Helpful indexes
 CREATE INDEX IF NOT EXISTS idx_user_recipes_category ON user_recipes(category);
 CREATE INDEX IF NOT EXISTS idx_grocery_list_checked ON grocery_list(is_checked);
+CREATE INDEX IF NOT EXISTS idx_grocery_list_session ON grocery_list(session_id);

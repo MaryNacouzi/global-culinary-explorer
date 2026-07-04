@@ -7,6 +7,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const crypto = require('crypto');
+const cookieParser = require('cookie-parser');
 const { Pool } = require('pg');
 const fetch = require('node-fetch');
 
@@ -14,9 +16,32 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ---------- Middleware ----------
-app.use(cors());
+app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// ---------- Anonymous session isolation (Grocery Assistant) ----------
+// Each browser is assigned a random, unguessable session id on first visit,
+// stored in an httpOnly cookie. Every grocery item is tagged with the
+// session id that created it, so one visitor's checklist never leaks into
+// or gets overwritten by another visitor's.
+const SESSION_COOKIE = 'gce_session';
+
+app.use((req, res, next) => {
+  let sessionId = req.cookies[SESSION_COOKIE];
+  if (!sessionId) {
+    sessionId = crypto.randomUUID();
+    res.cookie(SESSION_COOKIE, sessionId, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 365 * 24 * 60 * 60 * 1000 // 1 year
+    });
+  }
+  req.sessionId = sessionId;
+  next();
+});
 
 // ---------- Neon PostgreSQL connection ----------
 const pool = new Pool({
@@ -119,11 +144,12 @@ app.post('/api/recipes', async (req, res) => {
   }
 });
 
-// ---------- Grocery Assistant routes (Neon: grocery_list) — full CRUD ----------
+// ---------- Grocery Assistant routes (Neon: grocery_list) — full CRUD, per-session ----------
 app.get('/api/grocery', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT * FROM grocery_list ORDER BY created_at ASC'
+      'SELECT * FROM grocery_list WHERE session_id = $1 ORDER BY created_at ASC',
+      [req.sessionId]
     );
     res.json(result.rows);
   } catch (err) {
@@ -139,8 +165,8 @@ app.post('/api/grocery', async (req, res) => {
   }
   try {
     const result = await pool.query(
-      `INSERT INTO grocery_list (item_name, quantity) VALUES ($1, $2) RETURNING *`,
-      [item_name, quantity || '1']
+      `INSERT INTO grocery_list (item_name, quantity, session_id) VALUES ($1, $2, $3) RETURNING *`,
+      [item_name, quantity || '1', req.sessionId]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -154,8 +180,8 @@ app.put('/api/grocery/:id', async (req, res) => {
   const { is_checked } = req.body;
   try {
     const result = await pool.query(
-      `UPDATE grocery_list SET is_checked = $1 WHERE id = $2 RETURNING *`,
-      [is_checked, id]
+      `UPDATE grocery_list SET is_checked = $1 WHERE id = $2 AND session_id = $3 RETURNING *`,
+      [is_checked, id, req.sessionId]
     );
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Item not found' });
@@ -171,8 +197,8 @@ app.delete('/api/grocery/:id', async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query(
-      'DELETE FROM grocery_list WHERE id = $1 RETURNING *',
-      [id]
+      'DELETE FROM grocery_list WHERE id = $1 AND session_id = $2 RETURNING *',
+      [id, req.sessionId]
     );
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Item not found' });
