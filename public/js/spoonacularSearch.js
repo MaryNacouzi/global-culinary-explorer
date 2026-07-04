@@ -74,13 +74,15 @@ class SpoonacularSearch {
     const servings = item.servings ? `${item.servings} servings` : '';
 
     return `
-      <article class="dish-card">
-        ${image ? `<img src="${image}" alt="${title}" loading="lazy" />` : ''}
-        <div class="body">
-          <h3>${title}</h3>
-          <p>⏱ ${readyIn} ${servings ? '· ' + servings : ''}</p>
-        </div>
-      </article>
+      <a class="dish-card-link" href="recipe-details.html?id=${item.id}&source=spoonacular">
+        <article class="dish-card">
+          ${image ? `<img src="${image}" alt="${title}" loading="lazy" />` : ''}
+          <div class="body">
+            <h3>${title}</h3>
+            <p>⏱ ${readyIn} ${servings ? '· ' + servings : ''}</p>
+          </div>
+        </article>
+      </a>
     `;
   }
 

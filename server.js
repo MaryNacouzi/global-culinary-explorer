@@ -52,6 +52,26 @@ app.get('/api/spoonacular/search', async (req, res) => {
   }
 });
 
+app.get('/api/spoonacular/recipe/:id', async (req, res) => {
+  const { id } = req.params;
+  if (!SPOONACULAR_KEY) {
+    return res.status(500).json({ error: 'Server missing SPOONACULAR_API_KEY' });
+  }
+  try {
+    const url = `https://api.spoonacular.com/recipes/${id}/information?includeNutrition=false&apiKey=${SPOONACULAR_KEY}`;
+    const spoonRes = await fetch(url);
+    if (!spoonRes.ok) {
+      const errBody = await spoonRes.text();
+      return res.status(spoonRes.status).json({ error: 'Spoonacular request failed', details: errBody });
+    }
+    const data = await spoonRes.json();
+    res.json(data);
+  } catch (err) {
+    console.error('Spoonacular detail proxy error:', err);
+    res.status(500).json({ error: 'Failed to fetch recipe details' });
+  }
+});
+
 // ---------- Recipe Lab routes (Neon: user_recipes) ----------
 app.get('/api/recipes', async (req, res) => {
   try {
@@ -62,6 +82,20 @@ app.get('/api/recipes', async (req, res) => {
   } catch (err) {
     console.error('GET /api/recipes error:', err);
     res.status(500).json({ error: 'Failed to fetch recipes' });
+  }
+});
+
+app.get('/api/recipes/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query('SELECT * FROM user_recipes WHERE id = $1', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Recipe not found' });
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('GET /api/recipes/:id error:', err);
+    res.status(500).json({ error: 'Failed to fetch recipe' });
   }
 });
 

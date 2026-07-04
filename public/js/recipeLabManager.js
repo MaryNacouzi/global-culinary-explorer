@@ -110,13 +110,15 @@ class RecipeLabManager {
 
   renderCard(recipe) {
     return `
-      <article class="dish-card">
-        <div class="body">
-          <span class="badge-sage">${this.escapeHtml(recipe.category)}</span>
-          <h3>${this.escapeHtml(recipe.title)}</h3>
-          <p>By ${this.escapeHtml(recipe.author)} · ${recipe.prep_time_minutes} min</p>
-        </div>
-      </article>
+      <a class="dish-card-link" href="recipe-details.html?id=${recipe.id}&source=community">
+        <article class="dish-card">
+          <div class="body">
+            <span class="badge-sage">${this.escapeHtml(recipe.category)}</span>
+            <h3>${this.escapeHtml(recipe.title)}</h3>
+            <p>By ${this.escapeHtml(recipe.author)} · ${recipe.prep_time_minutes} min</p>
+          </div>
+        </article>
+      </a>
     `;
   }
 
