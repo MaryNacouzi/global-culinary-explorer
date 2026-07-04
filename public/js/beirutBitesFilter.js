@@ -28,15 +28,17 @@ class BeirutBitesFilter {
 
   renderCard(dish) {
     return `
-      <article class="dish-card" data-id="${dish.id}">
-        <div class="body">
-          <span style="font-size:2rem;">${dish.icon}</span>
-          <span class="badge-sage" style="float:right;">${this.escapeHtml(dish.category)}</span>
-          <h3>${this.escapeHtml(dish.name)}</h3>
-          <p style="font-style:italic;margin-bottom:0.3rem;">${this.escapeHtml(dish.arabicName)}</p>
-          <p>${this.escapeHtml(dish.description)}</p>
-        </div>
-      </article>
+      <a class="dish-card-link" href="beirut-bite-details.html?id=${dish.id}">
+        <article class="dish-card" data-id="${dish.id}">
+          <div class="body">
+            <span style="font-size:2rem;">${dish.icon}</span>
+            <span class="badge-sage" style="float:right;">${this.escapeHtml(dish.category)}</span>
+            <h3>${this.escapeHtml(dish.name)}</h3>
+            <p style="font-style:italic;margin-bottom:0.3rem;">${this.escapeHtml(dish.arabicName)}</p>
+            <p>${this.escapeHtml(dish.description)}</p>
+          </div>
+        </article>
+      </a>
     `;
   }
 
