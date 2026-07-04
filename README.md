@@ -24,7 +24,9 @@ Four pages:
 - **Recipe Lab** — a community submission form with regex-validated
   fields, storing entries in a Neon PostgreSQL database.
 - **Grocery Assistant** — a fully interactive checklist with full CRUD
-  (add, check off, delete) backed by the same database.
+  (add, check off, delete) backed by the same database. Each visitor is
+  assigned a private, anonymous session on first visit, so one person's
+  checklist never overlaps with anyone else's.
 - **Beirut Bites** — a hand-curated archive of 18 authentic Lebanese
   dishes with live client-side search/filter and individual detail pages.
 
@@ -49,7 +51,14 @@ Two further enhancements built on top of the base requirements:
 - A **URL-driven recipe/dish details system** (`recipe-details.html?id=&source=`,
   `beirut-bite-details.html?id=`) so any recipe or dish card can be opened
   as its own shareable, linkable page with full ingredients/instructions,
-  rather than only being viewable inline in a list.
+  rather than only being viewable inline in a list.  
+  - **Per-session grocery list isolation.** The Grocery Assistant originally
+  used a single shared table with no owner, meaning every visitor saw and
+  could edit the same list — a usability flaw discovered after initial
+  testing. It was fixed by assigning each browser an anonymous, unguessable
+  session id via an `httpOnly` cookie on first visit, and scoping every
+  grocery query (`GET`/`POST`/`PUT`/`DELETE`) to that id, so each visitor
+  now has a private checklist without requiring a full login system.
 
 ## e. AI-Use Appendix
 
@@ -93,24 +102,20 @@ Two further enhancements built on top of the base requirements:
    Minimalist UI Components: Keep navigation headers sparse and balanced, and use subtle, clean input bars for newsletter or search features to maintain a high-end feel without causing visual noise.
    Structured Grid Layout: Organize content in a consistent, orderly grid that combines large hero sections for featured items with uniform, smaller cards for secondary content, creating a rhythm that is both structured and easy to scan.
 
-   don't make dramatic changes, and provide me only with the modified files, also let the pop of color be some shade of red."
+   don't make dramatic changes, and provide me only with the modified files, also let the pop of color be some shade of red."  
+8. Reported that the Grocery Assistant was using a single shared list
+   visible to every visitor, and asked Claude to fix it.
 
 **What the AI got wrong, and how it was corrected:**
-1. **First color pass didn't match the final intended direction.** When
-   asked to restyle the site to look "high-end/minimalist" from a
-   reference image, Claude's first pass introduced a red accent color
-   used for buttons and active nav states. A second reference image made
-   clear the UI should stay fully neutral (off-white/charcoal/gray) with
-   *zero* accent color, letting only the photography provide color. This
-   required a full rewrite of the color variables and every rule that
-   referenced the old accent, rather than a small tweak — a good example
-   of why it's worth reviewing generated CSS against the actual design
-   spec rather than assuming the first pass is final.
+   The first backend implementation stored
+   grocery items in one shared table with no concept of "whose" list an
+   item belonged to — functionally fine for a demo, but a real usability
+   bug once more than one person could use it at once. This wasn't caught
+   until the app was actually used and the shared-state behavior was
+   noticed and reported. The fix required a schema change (`session_id`
+   column), a new cookie-based session middleware, and rewriting all
+   four grocery routes to scope by session — a good example of a design
+   flaw that only becomes obvious through real usage, not code review.
 
 
-**What was done independently:** Setting up the actual Neon database and
-Spoonacular API account (both require manual sign-up Claude can't do),
-running the app locally to confirm each phase worked before moving to the
-next, testing the full CRUD loop end-to-end, capturing the responsive
-screenshots, and reviewing/personalizing this document before submission.
 
