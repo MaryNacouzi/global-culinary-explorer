@@ -9,7 +9,7 @@
   --color-bg: #FBF9F5;
   --color-text: #4F622E;
   --color-sage: #C3D09A;
-  --color-mustard: #ffc31f;
+  --color-mustard: #EABA4A;
   --color-cream: #FEEABC;
   --radius-md: 14px;
   --shadow-soft: 0 4px 14px rgba(79, 98, 46, 0.12);
@@ -19,8 +19,15 @@
   box-sizing: border-box;
 }
 
+html {
+  height: 100%;
+}
+
 body {
   margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--color-bg);
   color: var(--color-text);
@@ -86,6 +93,8 @@ a {
 
 /* ---------------- Layout containers ---------------- */
 main {
+  flex: 1 0 auto;
+  width: 100%;
   max-width: 1140px;
   margin: 0 auto;
   padding: 2rem 1.25rem 4rem;
@@ -116,7 +125,7 @@ main {
 }
 
 .btn-mustard:hover {
-  background-color: #ffc31f;
+  background-color: #d9a63c;
   transform: translateY(-1px);
 }
 
@@ -133,8 +142,8 @@ footer {
   background-color: var(--color-text);
   color: var(--color-cream);
   text-align: center;
-  padding: 1.5rem;
-  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.76rem;
 }
 
 /* ---------------- Loading spinner ---------------- */
@@ -170,6 +179,10 @@ footer {
   overflow: hidden;
   box-shadow: var(--shadow-soft);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dish-card-link {
+  display: block;
 }
 
 .dish-card:hover {
